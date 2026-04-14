@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>貝克街桌遊｜尋找靈魂主揪</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="light"]{
+  --color-bg:#f5f3ef;--color-surface:#faf9f7;--color-surface-2:#ffffff;
+  --color-surface-offset:#ece9e4;--color-divider:#ddd9d3;--color-border:#ccc8c0;
+  --color-text:#1e1c18;--color-text-muted:#6b6760;--color-text-faint:#a8a59f;
+  --color-primary:#6b3a2a;--color-primary-hover:#522d20;--color-primary-hl:#e8d8d0;
+  --color-accent:#c4783a;--color-error:#c0392b;
+  --radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;
+  --shadow-sm:0 1px 3px oklch(0.2 0.02 40/.07);--shadow-md:0 4px 16px oklch(0.2 0.02 40/.1);
+  --font-display:'Noto Serif TC','Georgia',serif;--font-body:'Noto Sans TC','system-ui',sans-serif;
+  --text-xs:clamp(.75rem,.7rem + .25vw,.875rem);--text-sm:clamp(.875rem,.8rem + .35vw,1rem);
+  --text-base:clamp(1rem,.95rem + .25vw,1.125rem);--text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);
+  --text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+  --sp1:.25rem;--sp2:.5rem;--sp3:.75rem;--sp4:1rem;--sp5:1.25rem;--sp6:1.5rem;
+  --sp8:2rem;--sp10:2.5rem;--sp12:3rem;--sp16:4rem;
+}
+[data-theme="dark"]{
+  --color-bg:#16130f;--color-surface:#1d1a15;--color-surface-2:#231f19;
+  --color-surface-offset:#2a261f;--color-divider:#2e2b24;--color-border:#3a3630;
+  --color-text:#e8e4dc;--color-text-muted:#908c84;--color-text-faint:#615d57;
+  --color-primary:#d4856a;--color-primary-hover:#e8a08a;--color-primary-hl:#3a2820;
+  --color-accent:#e89a5e;--color-error:#e05c4a;
+  --shadow-sm:0 1px 3px oklch(0 0 0/.25);--shadow-md:0 4px 16px oklch(0 0 0/.35);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme]){
+  --color-bg:#16130f;--color-surface:#1d1a15;--color-surface-2:#231f19;
+  --color-surface-offset:#2a261f;--color-divider:#2e2b24;--color-border:#3a3630;
+  --color-text:#e8e4dc;--color-text-muted:#908c84;--color-text-faint:#615d57;
+  --color-primary:#d4856a;--color-primary-hover:#e8a08a;--color-primary-hl:#3a2820;
+  --color-accent:#e89a5e;--color-error:#e05c4a;
+  --shadow-sm:0 1px 3px oklch(0 0 0/.25);--shadow-md:0 4px 16px oklch(0 0 0/.35);
+}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:none;-webkit-font-smoothing:antialiased}
+body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background:var(--color-bg);line-height:1.65}
+img{display:block;max-width:100%}
+input,textarea,select,button{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:none}
+:focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm)}
+
+/* Header */
+.site-header{background:var(--color-surface);border-bottom:1px solid var(--color-divider);padding:var(--sp4) var(--sp6);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm)}
+.logo{display:flex;align-items:center;gap:var(--sp3);text-decoration:none;color:var(--color-text)}
+.logo-icon{width:38px;height:38px;flex-shrink:0}
+.logo-text{font-family:var(--font-display);font-size:var(--text-base);font-weight:700;line-height:1.2}
+.logo-sub{font-size:var(--text-xs);color:var(--color-text-muted)}
+.theme-toggle{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-full);color:var(--color-text-muted);transition:background 180ms ease,color 180ms ease}
+.theme-toggle:hover{background:var(--color-surface-offset);color:var(--color-text)}
+
+/* Progress */
+.progress-wrap{height:4px;background:var(--color-surface-offset);position:sticky;top:65px;z-index:90}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--color-primary),var(--color-accent));width:0%;transition:width 300ms ease}
+
+/* Hero */
+.form-hero{background:linear-gradient(135deg,var(--color-primary) 0%,var(--color-accent) 100%);color:white;padding:var(--sp10) var(--sp6) var(--sp8);text-align:center;position:relative;overflow:hidden}
+.form-hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
+.form-hero-icon{font-size:2.5rem;margin-bottom:var(--sp3);display:block;position:relative}
+.form-hero h1{font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;margin-bottom:var(--sp3);position:relative;text-shadow:0 1px 4px oklch(0 0 0/.2)}
+.form-hero p{font-size:var(--text-sm);opacity:.9;max-width:540px;margin:0 auto;position:relative;line-height:1.7}
+
+/* Layout */
+.form-wrapper{max-width:680px;margin:0 auto;padding:var(--sp8) var(--sp4) var(--sp16)}
+
+/* Section cards */
+.form-section{background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm);margin-bottom:var(--sp6);overflow:hidden;transition:box-shadow 200ms ease}
+.form-section:hover{box-shadow:var(--shadow-md)}
+.section-header{display:flex;align-items:center;gap:var(--sp3);padding:var(--sp5) var(--sp6);border-bottom:1px solid var(--color-divider);background:var(--color-surface-offset)}
+.section-num{width:28px;height:28px;background:var(--color-primary);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:var(--text-xs);font-weight:700;flex-shrink:0}
+.section-title{font-family:var(--font-display);font-size:var(--text-base);font-weight:700}
+.section-body{padding:var(--sp6);display:flex;flex-direction:column;gap:var(--sp5)}
+
+/* Fields */
+.field{display:flex;flex-direction:column;gap:var(--sp2)}
+.field-label{font-size:var(--text-sm);font-weight:500;display:flex;align-items:flex-start;gap:var(--sp1)}
+.field-num{color:var(--color-text-muted);font-weight:400;flex-shrink:0}
+.field-hint{font-size:var(--text-xs);color:var(--color-text-muted);font-style:italic;margin-top:calc(-1 * var(--sp1))}
+.required{color:var(--color-accent);margin-left:2px}
+.field-error{font-size:var(--text-xs);color:var(--color-error);display:none}
+.field-error.visible{display:block}
+
+input[type="text"],input[type="tel"],input[type="url"],textarea,select{
+  width:100%;padding:var(--sp3) var(--sp4);background:var(--color-surface-2);
+  border:1px solid var(--color-border);border-radius:var(--radius-md);
+  font-size:var(--text-sm);color:var(--color-text);
+  transition:border-color 180ms ease,box-shadow 180ms ease;appearance:none}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in oklch,var(--color-primary) 20%,transparent)}
+input::placeholder,textarea::placeholder{color:var(--color-text-faint)}
+textarea{resize:vertical;min-height:90px;line-height:1.6}
+.input-error{border-color:var(--color-error) !important;box-shadow:0 0 0 3px color-mix(in oklch,var(--color-error) 15%,transparent) !important}
+.radio-group-error{border:1.5px dashed var(--color-error);border-radius:var(--radius-md);padding:var(--sp2);background:color-mix(in oklch,var(--color-error) 5%,transparent)}
+
+.select-wrap{position:relative}
+.select-wrap::after{content:'';position:absolute;right:var(--sp4);top:50%;transform:translateY(-50%);width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--color-text-muted);pointer-events:none}
+.select-wrap select{padding-right:var(--sp10)}
+
+/* Radio */
+.radio-group{display:flex;flex-direction:column;gap:var(--sp2)}
+.radio-item{display:flex;align-items:flex-start;gap:var(--sp3);padding:var(--sp3) var(--sp4);border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface-2);cursor:pointer;transition:border-color 180ms ease,background 180ms ease}
+.radio-item:hover{border-color:var(--color-primary);background:var(--color-primary-hl)}
+.radio-item input[type="radio"]{width:auto;flex-shrink:0;margin-top:2px;accent-color:var(--color-primary);pointer-events:none}
+.radio-item label{font-size:var(--text-sm);cursor:pointer;line-height:1.5;pointer-events:none}
+.radio-item.selected{border-color:var(--color-primary);background:var(--color-primary-hl)}
+.radio-inline{display:flex;gap:var(--sp3);flex-wrap:wrap}
+.radio-inline .radio-item{flex:1;min-width:120px;justify-content:center}
+
+/* Chips */
+.chip-group{display:flex;flex-wrap:wrap;gap:var(--sp2)}
+.chip-label{display:inline-flex;cursor:pointer}
+.chip-label input{display:none}
+.chip{padding:var(--sp2) var(--sp4);border:1.5px solid var(--color-border);border-radius:var(--radius-full);background:var(--color-surface-2);font-size:var(--text-sm);color:var(--color-text-muted);transition:all 180ms ease;user-select:none}
+.chip-label:hover .chip{border-color:var(--color-primary);color:var(--color-primary);background:var(--color-primary-hl)}
+.chip-label input:checked~.chip{border-color:var(--color-primary);background:var(--color-primary);color:white;font-weight:500}
+.chip-group-error .chip{border-color:var(--color-error)}
+
+/* Submit */
+.submit-section{background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm);padding:var(--sp8) var(--sp6);text-align:center}
+.submit-section p{color:var(--color-text-muted);font-size:var(--text-sm);margin-bottom:var(--sp6);line-height:1.7}
+.btn-submit{display:inline-flex;align-items:center;gap:var(--sp2);background:var(--color-primary);color:white;padding:var(--sp4) var(--sp10);border-radius:var(--radius-full);font-size:var(--text-base);font-weight:600;box-shadow:var(--shadow-sm);transition:background 180ms ease,transform 120ms ease,box-shadow 180ms ease}
+.btn-submit:hover:not(:disabled){background:var(--color-primary-hover);transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.btn-submit:active:not(:disabled){transform:translateY(0)}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed}
+.btn-submit .btn-spinner{display:none;width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite}
+.btn-submit.loading .btn-spinner{display:block}
+.btn-submit.loading .btn-icon{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Submit error banner */
+.submit-error{display:none;background:color-mix(in oklch,var(--color-error) 10%,transparent);border:1px solid var(--color-error);color:var(--color-error);padding:var(--sp3) var(--sp4);border-radius:var(--radius-md);font-size:var(--text-sm);margin-top:var(--sp4);text-align:left}
+.submit-error.visible{display:block}
+
+/* Success */
+.success-screen{display:none;flex-direction:column;align-items:center;text-align:center;padding:var(--sp16) var(--sp6)}
+.success-screen.visible{display:flex}
+.success-icon{width:72px;height:72px;background:linear-gradient(135deg,var(--color-primary),var(--color-accent));border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:var(--sp6);box-shadow:var(--shadow-md)}
+.success-icon svg{width:36px;height:36px;stroke:white}
+.success-screen h2{font-family:var(--font-display);font-size:var(--text-xl);margin-bottom:var(--sp3)}
+.success-screen p{color:var(--color-text-muted);max-width:42ch;line-height:1.7}
+
+/* Footer */
+.site-footer{text-align:center;padding:var(--sp8) var(--sp4);color:var(--color-text-faint);font-size:var(--text-xs);border-top:1px solid var(--color-divider);background:var(--color-surface)}
+
+@media(max-width:600px){
+  .section-header{padding:var(--sp4)}
+  .section-body{padding:var(--sp4);gap:var(--sp4)}
+  .radio-inline{flex-direction:column}
+  .btn-submit{padding:var(--sp4) var(--sp8)}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a href="#" class="logo">
+    <svg class="logo-icon" viewBox="0 0 38 38" fill="none" aria-label="貝克街桌遊">
+      <rect width="38" height="38" rx="8" fill="var(--color-primary)"/>
+      <path d="M10 10h8c2.5 0 4 1.5 4 3.5S20.5 17 18 17h-8V10z" fill="white" opacity=".9"/>
+      <path d="M10 17h9c2.8 0 4.5 1.6 4.5 4S21.8 25 19 25h-9V17z" fill="white"/>
+      <circle cx="28" cy="12" r="3" fill="var(--color-accent)"/>
+      <path d="M25 18h6M28 15v6" stroke="var(--color-accent)" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <div class="logo-text">貝克街桌遊</div>
+      <div class="logo-sub">主揪合作申請</div>
+    </div>
+  </a>
+  <button class="theme-toggle" id="themeToggle" aria-label="切換深色模式">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</header>
+
+<div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+
+<div class="form-hero">
+  <span class="form-hero-icon">🕵️</span>
+  <h1>尋找靈魂主揪</h1>
+  <p>歡迎對帶團、揪團、經營桌遊或非桌遊活動有熱情的你報名合作。我們希望找到能與貝克街一起打造穩定活動氛圍的主揪夥伴。填寫完成後，我們會依內容安排場勘與面談。</p>
+</div>
+
+<main class="form-wrapper">
+<form id="mainForm" novalidate>
+
+  <!-- Part 1 -->
+  <div class="form-section">
+    <div class="section-header"><div class="section-num">1</div><div class="section-title">基本資料與身份</div></div>
+    <div class="section-body">
+
+      <div class="field">
+        <label class="field-label" for="q1"><span class="field-num">1.</span> 姓名／暱稱 <span class="required">*</span></label>
+        <input type="text" id="q1" name="q1" placeholder="請輸入您的姓名或暱稱" required>
+        <span class="field-error" id="q1-err">請填寫姓名或暱稱</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="q2"><span class="field-num">2.</span> 聯絡電話 <span class="required">*</span></label>
+        <input type="tel" id="q2" name="q2" placeholder="例：0912-345-678" required>
+        <span class="field-error" id="q2-err">請填寫聯絡電話</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="q3"><span class="field-num">3.</span> 社群連結（Threads / IG / FB）</label>
+        <div class="field-hint">📌 行銷觀察重點，讓我們了解您的社群影響力</div>
+        <input type="text" id="q3" name="q3" placeholder="貼上您最主要的社群連結">
+      </div>
+
+      <div class="field">
+        <label class="field-label"><span class="field-num">4.</span> 目前是否有自己的桌遊群組？<span class="required">*</span></label>
+        <div class="radio-group" id="q4-group">
+          <div class="radio-item" data-radio-name="q4" data-radio-value="yes">
+            <input type="radio" id="q4y" name="q4" value="yes" required><label for="q4y">✅ 有</label>
+          </div>
+          <div class="radio-item" data-radio-name="q4" data-radio-value="no">
+            <input type="radio" id="q4n" name="q4" value="no"><label for="q4n">❌ 沒有</label>
+          </div>
+        </div>
+        <span class="field-error" id="q4-err">請選擇一個選項</span>
+        <div id="q4-extra" style="display:none;margin-top:.5rem">
+          <input type="text" id="q4-count" name="q4-count" placeholder="約幾人？（例：20人、50人以上…）">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Part 2 -->
+  <div class="form-section">
+    <div class="section-header"><div class="section-num">2</div><div class="section-title">開團規劃</div></div>
+    <div class="section-body">
+
+      <div class="field">
+        <label class="field-label"><span class="field-num">5.</span> 預計開團頻率 <span class="required">*</span></label>
+        <div class="radio-group" id="q5-group">
+          <div class="radio-item" data-radio-name="q5" data-radio-value="weekly"><input type="radio" id="q5a" name="q5" value="weekly" required><label for="q5a">📅 每週固定</label></div>
+          <div class="radio-item" data-radio-name="q5" data-radio-value="biweekly"><input type="radio" id="q5b" name="q5" value="biweekly"><label for="q5b">📅 雙週固定</label></div>
+          <div class="radio-item" data-radio-name="q5" data-radio-value="monthly"><input type="radio" id="q5c" name="q5" value="monthly"><label for="q5c">📅 每月固定</label></div>
+          <div class="radio-item" data-radio-name="q5" data-radio-value="irregular"><input type="radio" id="q5d" name="q5" value="irregular"><label for="q5d">🎲 不定期</label></div>
+        </div>
+        <span class="field-error" id="q5-err">請選擇開團頻率</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="q6"><span class="field-num">6.</span> 偏好的固定時段</label>
+        <input type="text" id="q6" name="q6" placeholder="例：每週三晚間、每週日下午…">
+      </div>
+
+      <div class="field">
+        <label class="field-label"><span class="field-num">7.</span> 擅長的活動類別（可多選）<span class="required">*</span></label>
+        <div class="chip-group" id="q7-group">
+          <label class="chip-label"><input type="checkbox" name="q7" value="strategy"><span class="chip">🧠 策略桌遊</span></label>
+          <label class="chip-label"><input type="checkbox" name="q7" value="party"><span class="chip">🎉 派對遊戲</span></label>
+          <label class="chip-label"><input type="checkbox" name="q7" value="trpg"><span class="chip">🎭 跑團（TRPG）</span></label>
+          <label class="chip-label"><input type="checkbox" name="q7" value="murder"><span class="chip">🔍 劇本殺</span></label>
+          <label class="chip-label"><input type="checkbox" name="q7" value="other"><span class="chip">✨ 其他</span></label>
+        </div>
+        <span class="field-error" id="q7-err">請至少選擇一個活動類別</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="q8"><span class="field-num">8.</span> 最常揪的遊戲／活動名稱</label>
+        <input type="text" id="q8" name="q8" placeholder="例：瘟疫危機、寶石商人、TRPG CoC…">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Part 3 -->
+  <div class="form-section">
+    <div class="section-header"><div class="section-num">3</div><div class="section-title">專業與空間需求</div></div>
+    <div class="section-body">
+
+      <div class="field">
+        <label class="field-label"><span class="field-num">9.</span> 是否需要店員提供教學？<span class="required">*</span></label>
+        <div class="radio-group" id="q9-group">
+          <div class="radio-item" data-radio-name="q9" data-radio-value="full"><input type="radio" id="q9a" name="q9" value="full" required><label for="q9a">🙋 是，全部需要教學</label></div>
+          <div class="radio-item" data-radio-name="q9" data-radio-value="self"><input type="radio" id="q9b" name="q9" value="self"><label for="q9b">💪 否，我可以自己帶領</label></div>
+          <div class="radio-item" data-radio-name="q9" data-radio-value="partial"><input type="radio" id="q9c" name="q9" value="partial"><label for="q9c">🤝 部分需要</label></div>
+        </div>
+        <span class="field-error" id="q9-err">請選擇一個選項</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label"><span class="field-num">10.</span> 對於空間的需求（可多選）</label>
+        <div class="chip-group" id="q10-group">
+          <label class="chip-label"><input type="checkbox" name="q10" value="general"><span class="chip">🪑 一般座位區</span></label>
+          <label class="chip-label"><input type="checkbox" name="q10" value="vip10"><span class="chip">🚪 10人包廂</span></label>
+          <label class="chip-label"><input type="checkbox" name="q10" value="projector"><span class="chip">📽 需要投影設備</span></label>
+          <label class="chip-label"><input type="checkbox" name="q10" value="flexible"><span class="chip">🔄 彈性安排</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="q11"><span class="field-num">11.</span> 預計每團人數 <span class="required">*</span></label>
+        <div class="select-wrap">
+          <select id="q11" name="q11" required>
+            <option value="">請選擇…</option>
+            <option value="2-4">2–4 人</option>
+            <option value="5-8">5–8 人</option>
+            <option value="9-12">9–12 人</option>
+            <option value="13-20">13–20 人</option>
+            <option value="20+">20 人以上</option>
+          </select>
+        </div>
+        <span class="field-error" id="q11-err">請選擇預計人數</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Part 4 -->
+  <div class="form-section">
+    <div class="section-header"><div class="section-num">4</div><div class="section-title">主揪靈魂 QA</div></div>
+    <div class="section-body">
+
+      <div class="field">
+        <label class="field-label" for="q12"><span class="field-num">12.</span> 你覺得一個好的「主揪」最核心的特點是什麼？<span class="required">*</span></label>
+        <textarea id="q12" name="q12" placeholder="請分享你的想法…" rows="4" required></textarea>
+        <span class="field-error" id="q12-err">請填寫這個欄位</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="q13"><span class="field-num">13.</span> 你最喜歡貝克街的一個地方？<span class="required">*</span></label>
+        <div class="field-hint">💡 讓我們知道如何協助你推廣</div>
+        <textarea id="q13" name="q13" placeholder="請分享你印象最深刻的一點…" rows="3" required></textarea>
+        <span class="field-error" id="q13-err">請填寫這個欄位</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label"><span class="field-num">14.</span> 是否願意配合在活動當日發布 Threads/IG 限動並標記貝克街？<span class="required">*</span></label>
+        <div class="radio-group radio-inline" id="q14-group">
+          <div class="radio-item" data-radio-name="q14" data-radio-value="yes"><input type="radio" id="q14y" name="q14" value="yes" required><label for="q14y">✅ 願意</label></div>
+          <div class="radio-item" data-radio-name="q14" data-radio-value="no"><input type="radio" id="q14n" name="q14" value="no"><label for="q14n">🤔 需要再討論</label></div>
+        </div>
+        <span class="field-error" id="q14-err">請選擇一個選項</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <div class="submit-section">
+    <p>送出後，我們將依填寫內容安排場勘與面談，<br>進一步討論合作形式與活動檔期。期待與你一起打造精彩的桌遊活動！🎲</p>
+    <button type="submit" class="btn-submit" id="submitBtn">
+      <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+      <div class="btn-spinner"></div>
+      送出申請
+    </button>
+    <div class="submit-error" id="submitError"></div>
+  </div>
+
+</form>
+
+<!-- Success -->
+<div class="success-screen" id="successScreen">
+  <div class="success-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <h2>申請已送出！🎉</h2>
+  <p>感謝你的熱情報名。我們收到申請後，會在 3–5 個工作天內與你聯繫，安排場勘與面談。期待與你一起創造精彩的貝克街活動！</p>
+</div>
+</main>
+
+<footer class="site-footer">© 2025 貝克街桌遊 Baker Street Board Game Café｜本表單資料僅供合作洽談使用</footer>
+
+<script>
+// ─── 設定 Google Apps Script Web App URL ───────────────────────────
+// 請將下方 URL 換成你部署後的 Apps Script Web App URL
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8uET5VIcOM4O7d3U4l12CocUM2kL76B2py_U8VlPu2V9mb9lrscv3B4mN6Yk4JMc/exec';
+// ──────────────────────────────────────────────────────────────────
+
+// ─── Theme toggle ──────────────────────────────────────────────────
+(function () {
+  const btn = document.getElementById('themeToggle');
+  const root = document.documentElement;
+  const sunIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  const moonIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+
+  let theme = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+  root.setAttribute('data-theme', theme);
+
+  btn.addEventListener('click', () => {
+    theme = theme === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', theme);
+    btn.innerHTML = theme === 'dark' ? sunIcon : moonIcon;
+  });
+})();
+
+// ─── Radio 選取（使用 data 屬性，避免 label 雙觸發 Bug）──────────────
+document.querySelectorAll('.radio-item[data-radio-name]').forEach(item => {
+  item.addEventListener('click', () => {
+    const name = item.dataset.radioName;
+    const value = item.dataset.radioValue;
+
+    // 清除同 group 的 selected
+    document.querySelectorAll(`.radio-item[data-radio-name="${name}"]`)
+      .forEach(el => el.classList.remove('selected'));
+
+    item.classList.add('selected');
+
+    const input = item.querySelector('input[type="radio"]');
+    if (input) input.checked = true;
+
+    // Q4 群組人數顯示
+    if (name === 'q4') {
+      document.getElementById('q4-extra').style.display = value === 'yes' ? 'block' : 'none';
+    }
+
+    clearError(name);
+    updateProgress();
+  });
+});
+
+// ─── Checkbox 進度更新 ──────────────────────────────────────────────
+document.querySelectorAll('.chip-group input[type="checkbox"]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    clearError(cb.name);
+    updateProgress();
+  });
+});
+
+// ─── Text / textarea / select 即時清除錯誤 ──────────────────────────
+['q1','q2','q11','q12','q13'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', () => { clearFieldError(el); updateProgress(); });
+});
+document.getElementById('q11').addEventListener('change', () => {
+  clearFieldError(document.getElementById('q11')); updateProgress();
+});
+
+// ─── Progress bar ──────────────────────────────────────────────────
+function updateProgress() {
+  // required radio groups
+  const radioNames = ['q4', 'q5', 'q9', 'q14'];
+  let total = radioNames.length, filled = 0;
+  radioNames.forEach(n => { if (document.querySelector(`[name="${n}"]:checked`)) filled++; });
+
+  // required text / textarea / select
+  ['q1', 'q2', 'q11', 'q12', 'q13'].forEach(id => {
+    total++;
+    const el = document.getElementById(id);
+    if (el && el.value.trim()) filled++;
+  });
+
+  // required checkbox group q7
+  total++;
+  if (document.querySelectorAll('[name="q7"]:checked').length > 0) filled++;
+
+  document.getElementById('progressBar').style.width = Math.round((filled / total) * 100) + '%';
+}
+
+// ─── 驗證輔助 ──────────────────────────────────────────────────────
+function showFieldError(el, errId) {
+  el.classList.add('input-error');
+  const err = document.getElementById(errId);
+  if (err) err.classList.add('visible');
+}
+function clearFieldError(el) {
+  el.classList.remove('input-error');
+  const errId = el.id + '-err';
+  const err = document.getElementById(errId);
+  if (err) err.classList.remove('visible');
+}
+function showGroupError(groupId, errId) {
+  const g = document.getElementById(groupId);
+  if (g) g.classList.add('radio-group-error');
+  const err = document.getElementById(errId);
+  if (err) err.classList.add('visible');
+}
+function clearError(name) {
+  const groupEl = document.getElementById(name + '-group');
+  if (groupEl) groupEl.classList.remove('radio-group-error', 'chip-group-error');
+  const errEl = document.getElementById(name + '-err');
+  if (errEl) errEl.classList.remove('visible');
+}
+
+// ─── 表單驗證 ──────────────────────────────────────────────────────
+function validateForm() {
+  let valid = true;
+  let firstError = null;
+
+  // 文字欄位
+  [['q1', 'q1-err'], ['q2', 'q2-err'], ['q12', 'q12-err'], ['q13', 'q13-err']].forEach(([id, errId]) => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) {
+      showFieldError(el, errId);
+      if (!firstError) firstError = el;
+      valid = false;
+    } else {
+      clearFieldError(el);
+    }
+  });
+
+  // Select
+  const q11 = document.getElementById('q11');
+  if (!q11.value) {
+    showFieldError(q11, 'q11-err');
+    if (!firstError) firstError = q11;
+    valid = false;
+  } else {
+    clearFieldError(q11);
+  }
+
+  // Radio groups
+  ['q4', 'q5', 'q9', 'q14'].forEach(name => {
+    if (!document.querySelector(`[name="${name}"]:checked`)) {
+      showGroupError(name + '-group', name + '-err');
+      if (!firstError) firstError = document.getElementById(name + '-group');
+      valid = false;
+    } else {
+      clearError(name);
+    }
+  });
+
+  // Checkbox group q7
+  if (!document.querySelectorAll('[name="q7"]:checked').length) {
+    const g = document.getElementById('q7-group');
+    g.classList.add('chip-group-error');
+    const err = document.getElementById('q7-err');
+    if (err) err.classList.add('visible');
+    if (!firstError) firstError = g;
+    valid = false;
+  } else {
+    clearError('q7');
+  }
+
+  if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  return valid;
+}
+
+// ─── 收集資料 ──────────────────────────────────────────────────────
+function collectData() {
+  const get = id => (document.getElementById(id) || {}).value || '';
+  const getRadio = name => { const el = document.querySelector(`[name="${name}"]:checked`); return el ? el.value : ''; };
+  const getChecks = name => [...document.querySelectorAll(`[name="${name}"]:checked`)].map(el => el.value).join(', ');
+
+  return {
+    timestamp: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }),
+    q1_name: get('q1'),
+    q2_phone: get('q2'),
+    q3_social: get('q3'),
+    q4_has_group: getRadio('q4'),
+    q4_count: get('q4-count'),
+    q5_frequency: getRadio('q5'),
+    q6_schedule: get('q6'),
+    q7_categories: getChecks('q7'),
+    q8_games: get('q8'),
+    q9_teaching: getRadio('q9'),
+    q10_space: getChecks('q10'),
+    q11_headcount: get('q11'),
+    q12_host_quality: get('q12'),
+    q13_favorite: get('q13'),
+    q14_social_post: getRadio('q14'),
+  };
+}
+
+// ─── 送出表單 ──────────────────────────────────────────────────────
+document.getElementById('mainForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  if (!validateForm()) return;
+
+  const btn = document.getElementById('submitBtn');
+  const errBanner = document.getElementById('submitError');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  errBanner.classList.remove('visible');
+
+  const data = collectData();
+
+  // 若尚未設定 Apps Script URL，直接顯示成功（開發用）
+  if (APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    console.warn('[DEBUG] Apps Script URL 尚未設定，以下為表單資料：', data);
+    showSuccess();
+    return;
+  }
+
+  try {
+    // Apps Script Web App 需用 no-cors 或透過 JSONP；這裡使用 no-cors POST
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    showSuccess();
+  } catch (err) {
+    console.error('[ERROR] 送出失敗：', err);
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    errBanner.textContent = '送出時發生錯誤，請稍後再試或聯繫我們。（' + err.message + '）';
+    errBanner.classList.add('visible');
+  }
+});
+
+function showSuccess() {
+  document.getElementById('mainForm').style.display = 'none';
+  document.getElementById('successScreen').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 初始化 progress
+updateProgress();
+</script>
+</body>
+</html>
