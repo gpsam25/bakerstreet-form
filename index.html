@@ -581,12 +581,14 @@ document.getElementById('mainForm').addEventListener('submit', async function (e
   }
 
   try {
-    // Apps Script Web App 需用 no-cors 或透過 JSONP；這裡使用 no-cors POST
+    // no-cors 模式只允許 simple content type
+    // 將資料序列化為 payload 參數，用 form-urlencoded 傳送
+    const body = new URLSearchParams({ payload: JSON.stringify(data) });
     await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString(),
     });
     showSuccess();
   } catch (err) {
