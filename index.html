@@ -293,6 +293,7 @@ textarea{resize:vertical;min-height:90px;line-height:1.6}
           <label class="chip-label"><input type="checkbox" name="q10" value="vip10"><span class="chip">🚪 10人包廂</span></label>
           <label class="chip-label"><input type="checkbox" name="q10" value="projector"><span class="chip">📽 需要投影設備</span></label>
           <label class="chip-label"><input type="checkbox" name="q10" value="flexible"><span class="chip">🔄 彈性安排</span></label>
+          <label class="chip-label"><input type="checkbox" name="q10" value="other"><span class="chip">✏️ 其他</span></label>
         </div>
       </div>
 
@@ -320,7 +321,7 @@ textarea{resize:vertical;min-height:90px;line-height:1.6}
     <div class="section-body">
 
       <div class="field">
-        <label class="field-label" for="q12"><span class="field-num">12.</span> 你覺得一個好的「主揪」最核心的特點是什麼？<span class="required">*</span></label>
+        <label class="field-label" for="q12"><span class="field-num">12.</span> 你覺得一個好的「活動」最核心的特點是什麼？<span class="required">*</span></label>
         <textarea id="q12" name="q12" placeholder="請分享你的想法…" rows="4" required></textarea>
         <span class="field-error" id="q12-err">請填寫這個欄位</span>
       </div>
@@ -339,6 +340,16 @@ textarea{resize:vertical;min-height:90px;line-height:1.6}
           <div class="radio-item" data-radio-name="q14" data-radio-value="no"><input type="radio" id="q14n" name="q14" value="no"><label for="q14n">🤔 需要再討論</label></div>
         </div>
         <span class="field-error" id="q14-err">請選擇一個選項</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label"><span class="field-num">15.</span> 是否接受貝克街幫你的活動行銷推廣？<span class="required">*</span></label>
+        <div class="radio-group radio-inline" id="q15-group">
+          <div class="radio-item" data-radio-name="q15" data-radio-value="yes"><input type="radio" id="q15y" name="q15" value="yes" required><label for="q15y">✅ 接受</label></div>
+          <div class="radio-item" data-radio-name="q15" data-radio-value="no"><input type="radio" id="q15n" name="q15" value="no"><label for="q15n">❌ 不需要</label></div>
+          <div class="radio-item" data-radio-name="q15" data-radio-value="discuss"><input type="radio" id="q15d" name="q15" value="discuss"><label for="q15d">🤔 再討論</label></div>
+        </div>
+        <span class="field-error" id="q15-err">請選擇一個選項</span>
       </div>
 
     </div>
@@ -437,7 +448,7 @@ document.getElementById('q11').addEventListener('change', () => {
 // ─── Progress bar ──────────────────────────────────────────────────
 function updateProgress() {
   // required radio groups
-  const radioNames = ['q4', 'q5', 'q9', 'q14'];
+  const radioNames = ['q4', 'q5', 'q9', 'q14', 'q15'];
   let total = radioNames.length, filled = 0;
   radioNames.forEach(n => { if (document.querySelector(`[name="${n}"]:checked`)) filled++; });
 
@@ -508,7 +519,7 @@ function validateForm() {
   }
 
   // Radio groups
-  ['q4', 'q5', 'q9', 'q14'].forEach(name => {
+  ['q4', 'q5', 'q9', 'q14', 'q15'].forEach(name => {
     if (!document.querySelector(`[name="${name}"]:checked`)) {
       showGroupError(name + '-group', name + '-err');
       if (!firstError) firstError = document.getElementById(name + '-group');
@@ -557,6 +568,7 @@ function collectData() {
     q12_host_quality: get('q12'),
     q13_favorite: get('q13'),
     q14_social_post: getRadio('q14'),
+    q15_marketing: getRadio('q15'),
   };
 }
 
