@@ -582,7 +582,10 @@ document.getElementById('mainForm').addEventListener('submit', async function (e
 
   try {
     // Apps Script POST redirect 會丟失 body，改用 GET + URL 參數
-    const url = APPS_SCRIPT_URL + '?payload=' + encodeURIComponent(JSON.stringify(data));
+    // 將非 ASCII 字元轉為 \uXXXX，確保中文不會在傳輸中亂碼
+    const jsonStr = JSON.stringify(data).replace(/[^\x00-\x7F]/g,
+      c => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'));
+    const url = APPS_SCRIPT_URL + '?payload=' + encodeURIComponent(jsonStr);
     await fetch(url, { method: 'GET', mode: 'no-cors' });
     showSuccess();
   } catch (err) {
